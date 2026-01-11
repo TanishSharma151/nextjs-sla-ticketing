@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 
+let tickets : {
+    id : number;
+    title : string;
+    priority : string;
+}[] = [];
+
 export async function POST(request : Request) {
     const body = await request.json();
     const {title, priority} = body;
@@ -25,17 +31,24 @@ export async function POST(request : Request) {
         )
     }
 
+    const newTicket = {
+        id: tickets.length + 1,
+        title,
+        priority,    
+    };
+
+    tickets.push(newTicket);
+
     return NextResponse.json({
         message : "Ticket created",
-        ticket : {
-            title, 
-            priority,
-        },
+        ticket : newTicket
     },
     { status : 201}
     );
 }
 
 export async function GET() {
-  return NextResponse.json({ message: "tickets api alive" });
+    return NextResponse.json({
+        tickets,
+    });
 }
