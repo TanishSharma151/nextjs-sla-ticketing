@@ -1,54 +1,69 @@
-import {headers} from "next/headers"
+"use client";
 
-async function getTickets() {
-  const headersList = headers();
+import { useEffect, useState } from "react";
 
-  const host =
-    headersList.get("x-forwarded-host") ??
-    headersList.get("host");
+type Ticket = {
+  id: number;
+  title: string;
+  priority: string;
+  status: string;
+  sla: {
+    remainingMs: number;
+    isBreached: boolean;
+    paused?: boolean;
+  };
+};
 
-  const protocol =
-    headersList.get("x-forwarded-proto") ?? "https";
+export default function TicketsPage() {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!host) {
-    throw new Error("Host not found in headers");
+  useEffect(() => {
+    async function loadTickets() {
+      try {
+        const res = await fetch("/api/tickets");
+        const data = await res.json();
+        setTickets(data.tickets);
+      } catch (err) {
+        console.error("Failed to load tickets", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadTickets();
+  }, []);
+
+  if (loading) {
+    return <p style={{ padding: "2rem" }}>Loading tickets...</p>;
   }
 
-  const res = await fetch(`${protocol}://${host}/api/tickets`, {
-    cache: "no-store",
-  });
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Tickets</h1>
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch tickets");
-  }
+      {tickets.length === 0 && <p>No tickets found</p>}
 
-  return res.json();
-}
-
-
-export default async function TicketsPage() {
-    const data = await getTickets();
-
-    return(
-        <div style={{padding : "2rem"}}>
-            <h1>Tickets</h1>
-            {data.tickets.length === 0 && <p>No tickets found</p>}
-
-            <ul>{data.tickets.map((ticket: any)=> (
-                <li key = {ticket.id} style={{marginBottom : "1rem"}}>
-                    <strong>{ticket.title}</strong>
-                    <div>Priority: {ticket.priority}</div>
-                    <div>Status: {ticket.status}</div>
-                    <div>
-                        SLA Remaining: {" "}
-                        {Math.max(0, Math.floor(ticket.sla.remainingMs / 60000))} minutes
-                    </div>
-                    <div>
-                        Breached: {ticket.sla.isBreached ? "Yes" : "No"}
-                    </div>
-                    </li>
-            ))}
-            </ul>
-        </div>
-    );
+      <ul>
+        {tickets.map((ticket) => (
+          <li key={ticket.id} style={{ marginBottom: "1rem" }}>
+            <strong>{ticket.title}</strong>
+            <div>Priority: {ticket.priority}</div>
+            <div>Status: {ticket.status}</div>
+            <div>
+              SLA Remaining:{" "}
+              {Math.max(
+                0,
+                Math.floor(ticket.sla.remainingMs / 60000)
+              )}{" "}
+              minutes
+            </div>
+            <div>
+              Breached: {ticket.sla.isBreached ? "Yes" : "No"}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
