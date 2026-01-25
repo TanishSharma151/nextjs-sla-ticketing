@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-
 "use client";
 
-const [title, setTitle] = useState("");
-const [priority, setPriority] = useState("low");
+import { useEffect, useState } from "react";
 
 type Ticket = {
   id: number;
@@ -17,31 +14,12 @@ type Ticket = {
   };
 };
 
-async function createTicket(e: React.FormEvent) {
-  e.preventDefault();
-
-  const res = await fetch("/api/tickets",{
-    method: "POST",
-    headers: {
-      "Content-Type" : 'application/json',
-    },
-    body: JSON.stringify({ title, priority}),
-  });
-
-  if (!res.ok){
-    alert("Failed to create ticket");
-  }
-
-  const data = await res.json();
-
-  setTickets((prev) => [...prev, data.ticket]);
-  setTitle("");
-  setPriority("low");
-}
-
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState("low");
 
   useEffect(() => {
     async function loadTickets() {
@@ -59,6 +37,29 @@ export default function TicketsPage() {
     loadTickets();
   }, []);
 
+  async function createTicket(e: React.FormEvent) {
+    e.preventDefault();
+
+    const res = await fetch("/api/tickets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, priority }),
+    });
+
+    if (!res.ok) {
+      alert("Failed to create ticket");
+      return;
+    }
+
+    const data = await res.json();
+
+    setTickets((prev) => [...prev, data.ticket]);
+    setTitle("");
+    setPriority("low");
+  }
+
   if (loading) {
     return <p style={{ padding: "2rem" }}>Loading tickets...</p>;
   }
@@ -67,13 +68,21 @@ export default function TicketsPage() {
     <div style={{ padding: "2rem" }}>
       <h1>Tickets</h1>
 
-      {tickets.length === 0 && <p>No tickets found</p>}
+      <form onSubmit={createTicket} style={{ marginBottom: "2rem" }}>
+        <input
+          type="text"
+          placeholder="Ticket title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          style={{ marginRight: "1rem" }}
+        />
 
-      <form onSubmit={createTicket} style={{ marginBottom: "2rem"}}>
-
-        <input type="text" placeholder="Ticket title" value={title} onChange={(e) => setTitle(e.target.value)} required style={{marginRight : "1rem" }}/>
-
-        <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ marginRight: "1rem" }}>
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          style={{ marginRight: "1rem" }}
+        >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
@@ -81,6 +90,8 @@ export default function TicketsPage() {
 
         <button type="submit">Create Ticket</button>
       </form>
+
+      {tickets.length === 0 && <p>No tickets found</p>}
 
       <ul>
         {tickets.map((ticket) => (
