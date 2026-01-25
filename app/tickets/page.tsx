@@ -1,21 +1,30 @@
 import {headers} from "next/headers"
 
-async function getTickets(){
-    const headersList = headers();
-    const host = headersList.get("host");
+async function getTickets() {
+  const headersList = headers();
 
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const host =
+    headersList.get("x-forwarded-host") ??
+    headersList.get("host");
 
-    const res = await fetch(`${protocol}://${host}/api/tickets`, {
-        cache : "no-store",
-    });
+  const protocol =
+    headersList.get("x-forwarded-proto") ?? "https";
 
-    if(!res.ok){
-        throw new Error("Failed to fetch tickets"); 
-    }
+  if (!host) {
+    throw new Error("Host not found in headers");
+  }
 
-    return res.json();
+  const res = await fetch(`${protocol}://${host}/api/tickets`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch tickets");
+  }
+
+  return res.json();
 }
+
 
 export default async function TicketsPage() {
     const data = await getTickets();
