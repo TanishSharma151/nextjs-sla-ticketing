@@ -1,5 +1,12 @@
+import {headers} from "next/headers"
+
 async function getTickets(){
-    const res = await fetch(`/api/tickets`, {
+    const headersList = headers();
+    const host = headersList.get("host");
+
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+    const res = await fetch(`${protocol}://${host}/api/tickets`, {
         cache : "no-store",
     });
 
