@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
+
 "use client";
 
-import { useEffect, useState } from "react";
+const [title, setTitle] = useState("");
+const [priority, setPriority] = useState("low");
 
 type Ticket = {
   id: number;
@@ -13,6 +16,28 @@ type Ticket = {
     paused?: boolean;
   };
 };
+
+async function createTicket(e: React.FormEvent) {
+  e.preventDefault();
+
+  const res = await fetch("/api/tickets",{
+    method: "POST",
+    headers: {
+      "Content-Type" : 'application/json',
+    },
+    body: JSON.stringify({ title, priority}),
+  });
+
+  if (!res.ok){
+    alert("Failed to create ticket");
+  }
+
+  const data = await res.json();
+
+  setTickets((prev) => [...prev, data.ticket]);
+  setTitle("");
+  setPriority("low");
+}
 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -43,6 +68,19 @@ export default function TicketsPage() {
       <h1>Tickets</h1>
 
       {tickets.length === 0 && <p>No tickets found</p>}
+
+      <form onSubmit={createTicket} style={{ marginBottom: "2rem"}}>
+
+        <input type="text" placeholder="Ticket title" value={title} onChange={(e) => setTitle(e.target.value)} required style={{marginRight : "1rem" }}/>
+
+        <select value={priority} onChange={(e) => setPriority(e.target.value)} style={{ marginRight: "1rem" }}>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+
+        <button type="submit">Create Ticket</button>
+      </form>
 
       <ul>
         {tickets.map((ticket) => (
