@@ -1,5 +1,5 @@
 async function getTickets(){
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/tickets`, {
+    const res = await fetch(`/api/tickets`, {
         cache : "no-store",
     });
 
@@ -11,7 +11,7 @@ async function getTickets(){
 }
 
 export default async function TicketsPage() {
-    const data = await getTickets();4
+    const data = await getTickets();
 
     return(
         <div style={{padding : "2rem"}}>
