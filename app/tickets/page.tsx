@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 type Ticket = {
   id: number;
   title: string;
+  requester_email: string;
   priority: string;
   status: string;
   sla: {
@@ -19,6 +20,7 @@ export default function TicketsPage() {
   const [loading, setLoading] = useState(true);
 
   const [title, setTitle] = useState("");
+  const [email, setEmail] = useState("");
   const [priority, setPriority] = useState("low");
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function TicketsPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, priority }),
+      body: JSON.stringify({ title, priority, email }),
     });
 
     if (!res.ok) {
@@ -57,20 +59,21 @@ export default function TicketsPage() {
     const data = await refreshed.json();
 
     setTickets(Array.isArray(data.tickets) ? data.tickets : []);
+    setEmail("");
     setTitle("");
     setPriority("low");
   }
 
   async function updateStatus(id: number, status: string) {
-    const res = await fetch("/api/tickets",{
-      method : "PATCH",
+    const res = await fetch("/api/tickets", {
+      method: "PATCH",
       headers: {
-        "Content-type" : "application/json",
+        "Content-type": "application/json",
       },
-      body : JSON.stringify({ id, status}),
+      body: JSON.stringify({ id, status }),
     });
 
-    if (!res.ok){
+    if (!res.ok) {
       alert("Faile to update status");
     }
 
@@ -78,11 +81,11 @@ export default function TicketsPage() {
 
     setTickets((prev) =>
       prev.map((t) => (t.id === id ? {
-        ...t, 
-        status : data.ticket.status,
+        ...t,
+        status: data.ticket.status,
       }
-      : t
-    ))
+        : t
+      ))
     );
   }
 
@@ -92,9 +95,19 @@ export default function TicketsPage() {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Tickets</h1>
+      <h1 style={{ fontSize: 50 }}>Tickets</h1>
 
       <form onSubmit={createTicket} style={{ marginBottom: "2rem" }}>
+
+        <input
+          type="email"
+          placeholder="Your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ marginRight: "1rem", padding: "0.25rem" }}
+        />
+
         <input
           type="text"
           placeholder="Ticket title"
@@ -122,22 +135,51 @@ export default function TicketsPage() {
 
       <ul>
         {tickets.map((ticket) => (
-          <li 
-            key={ticket.id} 
-            style={{ 
+          <li
+            key={ticket.id}
+            style={{
               marginBottom: "1.25rem",
-              padding : "1rem",
+              padding: "1rem",
               border: "1px solid #2a2a2a",
               borderRadius: "6px",
               backgroundColor: "#0f0f0f",
             }}>
-            <div style={{ fontSize: "1.05rem", fontWeight: "600"}}>
+            <div style={{ fontSize: "1.05rem", fontWeight: "600" }}>
               {ticket.title}
             </div>
-            <div style={{ marginTop: "0.25rem", fontSize: "0.9rem", color: "#d1d5db"}}>
-              Priority: {ticket.priority}
+            <div style={{ color: "#e5e7eb" }}> email : {""}
+              {ticket.requester_email}
             </div>
-            <div>Status: {ticket.status}</div>
+
+
+            <div style={{ color: "#e5e7eb" }}>
+              Priority:{" "}
+                {ticket.priority.toUpperCase()}
+            </div>
+
+
+            <div style={{ marginTop: "0.25rem" }}>
+              Status:{" "}
+              <span
+                style={{
+                  padding: "2px 8px",
+                  borderRadius: "999px",
+                  fontSize: "0.75rem",
+                  backgroundColor:
+                    ticket.status === "open"
+                      ? "#374151"
+                      : ticket.status === "in_progress"
+                        ? "#78350f"
+                        : ticket.status === "resolved"
+                          ? "#14532d"
+                          : "#1f2937",
+                  color: "white",
+                }}
+              >
+                {ticket.status}
+              </span>
+            </div>
+
             <div>
               SLA Remaining:{" "}
               {Math.max(
@@ -150,17 +192,31 @@ export default function TicketsPage() {
               Breached: {ticket.sla.isBreached ? "Yes" : "No"}
             </div>
             <div style={{ marginTop: "0.5rem" }}>
-              <button onClick={() => updateStatus(ticket.id, "open")} style={{ padding: "0.25rem 0.5rem", borderRadius: "4px", border: "1px solid #374151", background: "transparent", color: "#e5e7eb",}}>
+              <button onClick={() => updateStatus(ticket.id, "open")} style={{ padding: "0.25rem 0.5rem", borderRadius: "4px", border: "1px solid #374151", background: "transparent", color: "#e5e7eb", }}>
                 Open
               </button>
 
-              <button onClick={() => updateStatus(ticket.id, "in_progress")} style={{padding: "0.25rem 0.5rem",borderRadius: "4px",border: "1px solid #374151",background: "transparent", color: "#e5e7eb",
-  }}>
+              <button onClick={() => updateStatus(ticket.id, "in_progress")} style={{
+                padding: "0.25rem 0.5rem", borderRadius: "4px", border: "1px solid #374151", background: "transparent", color: "#e5e7eb",
+              }}>
                 In Progress
               </button>
 
-              <button onClick={() => updateStatus(ticket.id, "resolved")} style={{padding: "0.25rem 0.5rem",borderRadius: "4px",border: "1px solid #374151",background: "transparent",color: "#e5e7eb",}}>
+              <button onClick={() => updateStatus(ticket.id, "resolved")} style={{ padding: "0.25rem 0.5rem", borderRadius: "4px", border: "1px solid #374151", background: "transparent", color: "#e5e7eb", }}>
                 Resolved
+              </button>
+              <button
+                onClick={() => updateStatus(ticket.id, "closed")}
+                style={{
+                  marginLeft: "0.5rem",
+                  padding: "0.25rem 0.5rem",
+                  borderRadius: "4px",
+                  border: "1px solid #374151",
+                  background: "transparent",
+                  color: "#ffffff",
+                }}
+              >
+                Closed
               </button>
             </div>
           </li>
