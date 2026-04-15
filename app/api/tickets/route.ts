@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { sendEmail } from "@/lib/email";
+import { NextResponse } from "next/server"; 
+import { supabase } from "@/lib/supabase"; 
+import { sendEmail } from "@/app/api/lib/email";
 
 type Ticket = {
   requester_email: string;
