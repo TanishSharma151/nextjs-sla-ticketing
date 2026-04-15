@@ -12,20 +12,6 @@ type Ticket = {
   dueAt: number;
 };
 
-import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { sendEmail } from "@/app/api/lib/email";
-
-type Ticket = {
-  requester_email: string,
-  id: number;
-  title: string;
-  priority: "low" | "medium" | "high";
-  status: "open" | "in_progress" | "resolved" | "closed";
-  createdAt: number;
-  dueAt: number;
-};
-
 function computeSLA(ticket: Ticket) {
   const now = Date.now();
 
