@@ -22,15 +22,6 @@ function computeSLA(ticket: Ticket) {
     isBreached: remainingMs <= 0,
     paused: ticket.status !== "open",
   };
-
-  const now = Date.now();
-  const remainingMs = ticket.dueAt - now;
-
-  return {
-    remainingMs,
-    isBreached: remainingMs <= 0,
-    paused: false,
-  };
 }
 
 const SLA_DURATION: Record<Ticket["priority"], number> = {
