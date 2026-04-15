@@ -65,29 +65,23 @@ export default function TicketsPage() {
   }
 
   async function updateStatus(id: number, status: string) {
-    const res = await fetch("/api/tickets", {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({ id, status }),
-    });
+  const res = await fetch("/api/tickets", {
+    method: "PATCH",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify({ id, status }),
+  });
 
-    if (!res.ok) {
-      alert("Faile to update status");
-    }
-
-    const data = await res.json();
-
-    setTickets((prev) =>
-      prev.map((t) => (t.id === id ? {
-        ...t,
-        status: data.ticket.status,
-      }
-        : t
-      ))
-    );
+  if (!res.ok) {
+    alert("Failed to update status");
+    return;
   }
+  const refreshed = await fetch("/api/tickets");
+  const data = await refreshed.json();
+
+  setTickets(Array.isArray(data.tickets) ? data.tickets : []);
+}
 
   if (loading) {
     return <p style={{ padding: "2rem" }}>Loading tickets...</p>;
