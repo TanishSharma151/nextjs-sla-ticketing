@@ -13,13 +13,16 @@ type Ticket = {
 };
 
 function computeSLA(ticket: Ticket) {
-  if (ticket.status !== "open") {
-    return {
-      remainingMs: ticket.dueAt - ticket.createdAt,
-      isBreached: false,
-      paused: true,
-    };
-  }
+  const now = Date.now();
+
+  const remainingMs = ticket.dueAt - now;
+
+  return {
+    remainingMs,
+    isBreached: remainingMs <= 0,
+    paused: ticket.status !== "open",
+  };
+}
 
   const now = Date.now();
   const remainingMs = ticket.dueAt - now;
