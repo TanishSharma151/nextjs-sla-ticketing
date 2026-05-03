@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server"; 
-import { supabase } from "@/lib/supabase"; 
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 import { sendEmail } from "@/app/api/lib/email";
 
 type Ticket = {
@@ -8,13 +8,14 @@ type Ticket = {
   title: string;
   priority: "low" | "medium" | "high";
   status: "open" | "in_progress" | "resolved" | "closed";
-  createdAt: number;
-  dueAt: number;
+  createdAt: string;
+  dueAt: string;
 };
 
 function computeSLA(ticket: Ticket) {
   const now = Date.now();
-  const remainingMs = ticket.dueAt - now;
+  const due = new Date(ticket.dueAt).getTime();
+  const remainingMs = due - now;
 
   return {
     remainingMs,
@@ -29,6 +30,18 @@ const SLA_DURATION: Record<Ticket["priority"], number> = {
   high: 2 * 60 * 60 * 1000,
 };
 
+// const VALID_PRIORITIES = ["low", "medium", "high"] as const;
+
+// if (!VALID_PRIORITIES.includes(priority)) {
+//   return NextResponse.json({ message: "Invalid priority" }, { status: 400 });
+// }
+
+type Priority = Ticket["priority"];
+
+function isPriority(value: any): value is Priority {
+  return ["low", "medium", "high"].includes(value);
+}
+
 export async function POST(request: Request) {
   const { title, priority, email } = await request.json();
 
@@ -36,7 +49,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Missing fields" }, { status: 400 });
   }
 
-  const now = Date.now();
+  if (!isPriority(priority)) {
+    return NextResponse.json({ message: "Invalid priority" }, { status: 400 });
+  }
+
+  const now = new Date();
 
   const { data, error } = await supabase
     .from("tickets")
@@ -45,8 +62,8 @@ export async function POST(request: Request) {
         title,
         priority,
         status: "open",
-        created_at: now,
-        due_at: now + SLA_DURATION[priority],
+        created_at: now.toISOString(),
+        due_at: new Date(now.getTime() + SLA_DURATION[priority]).toISOString(),
         requester_email: email,
       },
     ])
@@ -100,11 +117,21 @@ export async function GET() {
   return NextResponse.json({ tickets });
 }
 
+type Status = Ticket["status"];
+
+function isStatus(value: any): value is Status {
+  return ["open", "in_progress", "resolved", "closed"].includes(value);
+}
+
 export async function PATCH(request: Request) {
   const { id, status } = await request.json();
 
   if (!id || !status) {
     return NextResponse.json({ message: "id and status required" }, { status: 400 });
+  }
+
+  if (!isStatus(status)) {
+    return NextResponse.json({ message: "Invalid status" }, { status: 400 });
   }
 
   const { data, error } = await supabase
