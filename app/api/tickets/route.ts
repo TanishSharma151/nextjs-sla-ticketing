@@ -10,7 +10,7 @@ type Ticket = {
   status: "open" | "in_progress" | "resolved" | "closed";
   createdAt: string;
   dueAt: string;
-};
+}
 
 function computeSLA(ticket: Ticket) {
   const now = Date.now();
