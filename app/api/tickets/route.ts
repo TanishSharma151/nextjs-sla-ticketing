@@ -8,13 +8,13 @@ type Ticket = {
   title: string;
   priority: "low" | "medium" | "high";
   status: "open" | "in_progress" | "resolved" | "closed";
-  createdAt: string;
-  dueAt: string;
+  createdAt: number;
+  dueAt: number;
 }
 
 function computeSLA(ticket: Ticket) {
   const now = Date.now();
-  const due = new Date(ticket.dueAt).getTime();
+  const due = ticket.dueAt;
   const remainingMs = due - now;
 
   return {
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid priority" }, { status: 400 });
   }
 
-  const now = new Date();
+  const now = Date.now();
 
   const { data, error } = await supabase
     .from("tickets")
@@ -62,8 +62,8 @@ export async function POST(request: Request) {
         title,
         priority,
         status: "open",
-        created_at: now.toISOString(),
-        due_at: new Date(now.getTime() + SLA_DURATION[priority]).toISOString(),
+        created_at: now,
+        due_at: now + SLA_DURATION[priority],
         requester_email: email,
       },
     ])
