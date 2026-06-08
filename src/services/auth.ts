@@ -37,8 +37,17 @@ export async function logout() {
 }
 
 export async function getMe() {
+  console.log(
+    'Calling /auth/me',
+  );
+
   const response = await api.get(
     '/auth/me',
+  );
+
+  console.log(
+    'GET ME RESPONSE',
+    response.data,
   );
 
   return response.data;

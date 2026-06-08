@@ -92,59 +92,72 @@ export default function DashboardPage() {
     let interval:
       NodeJS.Timeout;
 
-    const initialize =
+    const initialize = async () => {
+  try {
+    console.log('STEP 1: Calling getMe()');
+
+    const user = await getMe();
+
+    console.log(
+      'STEP 2: getMe success',
+      user,
+    );
+
+    const currentRole =
+      user?.memberships?.[0]?.role;
+
+    setRole(currentRole);
+
+    if (
+      currentRole ===
+      'CLIENT'
+    ) {
+      router.push(
+        '/my-tickets',
+      );
+
+      return;
+    }
+
+    const fetchTickets =
       async () => {
-        try {
-          const user =
-            await getMe();
+        console.log(
+          'STEP 3: Fetching tickets',
+        );
 
-          const currentRole =
-            user?.memberships?.[0]
-              ?.role;
+        const data =
+          await getTickets();
 
-          setRole(
-            currentRole,
-          );
+        console.log(
+          'STEP 4: Tickets loaded',
+          data,
+        );
 
-          // CLIENT cannot access dashboard
-          if (
-            currentRole ===
-            'CLIENT'
-          ) {
-            router.push(
-              '/my-tickets',
-            );
-
-            return;
-          }
-
-          const fetchTickets =
-            async () => {
-              const data =
-                await getTickets();
-
-              setTickets(data);
-            };
-
-          await fetchTickets();
-
-          interval =
-            setInterval(
-              fetchTickets,
-              5000,
-            );
-        } catch (error) {
-          console.error(
-            error,
-          );
-
-          router.push(
-            '/login',
-          );
-        } finally {
-          setLoading(false);
-        }
+        setTickets(data);
       };
+
+    await fetchTickets();
+
+    interval = setInterval(
+      fetchTickets,
+      5000,
+    );
+  } catch (error: any) {
+    console.error(
+      'GET ME FAILED',
+      error?.response?.status,
+      error?.response?.data,
+    );
+
+    alert(
+      `Auth Failed: ${error?.response?.status}`,
+    );
+
+    router.push('/login');
+  } finally {
+    setLoading(false);
+  }
+};
 
     initialize();
 
