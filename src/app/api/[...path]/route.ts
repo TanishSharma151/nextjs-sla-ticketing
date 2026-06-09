@@ -2,14 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND = process.env.NEXT_PUBLIC_API_URL!;
 
-async function handler(req: NextRequest, { params }: { params: { path: string[] } }) {
-  const path = params.path.join('/');
-  const url = `${BACKEND}/${path}`;
+async function handler(
+  req: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }  // 👈 Promise here
+) {
+  const { path } = await params;  // 👈 await it
+  const url = `${BACKEND}/${path.join('/')}`;
 
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
 
-  // Forward the cookie from browser → NestJS
   const cookie = req.headers.get('cookie');
   if (cookie) headers.set('cookie', cookie);
 
@@ -26,7 +28,6 @@ async function handler(req: NextRequest, { params }: { params: { path: string[] 
   const data = await res.text();
   const response = new NextResponse(data, { status: res.status });
 
-  // Forward Set-Cookie from NestJS → browser (now as first-party)
   const setCookie = res.headers.get('set-cookie');
   if (setCookie) response.headers.set('set-cookie', setCookie);
 
