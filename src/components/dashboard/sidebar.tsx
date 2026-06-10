@@ -12,6 +12,8 @@ import {
   useRouter,
 } from 'next/navigation';
 
+import ThemeToggle from '@/components/theme-toggle';
+
 import {
   LayoutDashboard,
   Ticket,
@@ -71,7 +73,7 @@ export default function Sidebar() {
 
           setRole(
             membership?.role ||
-              null,
+            null,
           );
         } catch (error) {
           setUser(null);
@@ -232,28 +234,47 @@ export default function Sidebar() {
         </div>
 
         {/* MOBILE MENU BUTTON */}
-        <button
-          onClick={() =>
-            setMobileOpen(
-              !mobileOpen,
-            )
-          }
-          className="
-            flex h-10 w-10
-            items-center
-            justify-center
-            rounded-xl
-            border border-zinc-200
+        <div className="flex items-center gap-2">
 
-            dark:border-white/10
-          "
-        >
-          {mobileOpen ? (
-            <X size={18} />
-          ) : (
-            <Menu size={18} />
-          )}
-        </button>
+          <div
+            className="
+      rounded-xl
+      border border-zinc-200
+      bg-white
+
+      dark:border-white/10
+      dark:bg-white/[0.03]
+    "
+          >
+            <ThemeToggle />
+          </div>
+
+          <button
+            onClick={() =>
+              setMobileOpen(
+                !mobileOpen,
+              )
+            }
+            className="
+              flex h-10 w-10
+              items-center
+              justify-center
+              rounded-xl
+              border border-zinc-200
+              bg-white
+
+              dark:border-white/10
+              dark:bg-white/[0.03]
+            "
+          >
+            {mobileOpen ? (
+              <X size={18} />
+            ) : (
+              <Menu size={18} />
+            )}
+          </button>
+
+        </div>
       </div>
 
       {/* MOBILE OVERLAY */}
@@ -289,10 +310,9 @@ export default function Sidebar() {
 
           lg:translate-x-0
 
-          ${
-            mobileOpen
-              ? 'translate-x-0'
-              : '-translate-x-full'
+          ${mobileOpen
+            ? 'translate-x-0'
+            : '-translate-x-full'
           }
         `}
       >
@@ -383,9 +403,8 @@ export default function Sidebar() {
                     transition-all
                     duration-200
 
-                    ${
-                      active
-                        ? `
+                    ${active
+                      ? `
                           bg-black
                           text-white
                           shadow-lg
@@ -393,7 +412,7 @@ export default function Sidebar() {
                           dark:bg-white
                           dark:text-black
                         `
-                        : `
+                      : `
                           text-zinc-600
                           hover:bg-zinc-100
                           hover:text-black

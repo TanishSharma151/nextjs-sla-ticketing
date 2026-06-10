@@ -349,7 +349,7 @@ export default function SlaPoliciesPage() {
           "
         >
           <Card
-              className="
+            className="
               rounded-2xl
               border border-zinc-200
               bg-white
@@ -546,36 +546,44 @@ export default function SlaPoliciesPage() {
               <div className="space-y-2">
                 <label
                   className="
-                    text-sm
-                    font-medium
-                    text-zinc-600
-
-                    dark:text-zinc-400
-                  "
+      text-sm
+      font-medium
+      text-zinc-600
+      dark:text-zinc-400
+    "
                 >
                   Priority
                 </label>
 
                 <Select
                   value={priority}
-                  onValueChange={
-                    setPriority
-                  }
+                  onValueChange={setPriority}
                 >
                   <SelectTrigger
                     className="
-                      h-11
-                      rounded-xl
-                      border-zinc-200
-                      bg-zinc-50
-                      dark:border-white/10
-                      dark:bg-zinc-950
-                    "
+        h-11
+        rounded-xl
+        border-zinc-200
+        bg-zinc-50
+
+        dark:border-white/10
+        dark:bg-zinc-950
+      "
                   >
                     <SelectValue />
                   </SelectTrigger>
 
-                  <SelectContent position="popper" sideOffset={6} className="max-h-60">
+                  <SelectContent
+                    className="
+        rounded-xl
+        border-zinc-200
+        bg-white
+        shadow-xl
+
+        dark:border-white/10
+        dark:bg-zinc-900
+      "
+                  >
                     <SelectItem value="LOW">
                       LOW
                     </SelectItem>
