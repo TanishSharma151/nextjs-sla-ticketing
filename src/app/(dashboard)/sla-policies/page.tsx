@@ -343,43 +343,43 @@ export default function SlaPoliciesPage() {
         {/* STATS */}
         <div
           className="
-    grid
-    grid-cols-3
-    gap-3
-  "
+            grid
+            grid-cols-3
+            gap-3
+          "
         >
           <Card
-            className="
-      rounded-2xl
-      border border-zinc-200
-      bg-white
-      p-3
+              className="
+              rounded-2xl
+              border border-zinc-200
+              bg-white
+              p-3
 
-      lg:p-5
+              lg:p-5
 
-      dark:border-white/10
-      dark:bg-zinc-900/40
-    "
+              dark:border-white/10
+              dark:bg-zinc-900/40
+            "
           >
             <p
               className="
-        text-[11px]
+                text-[11px]
 
-        lg:text-sm
-        text-zinc-500
-      "
+                lg:text-sm
+                text-zinc-500
+              "
             >
               Total Policies
             </p>
 
             <h2
               className="
-        mt-2
-        text-2xl
-        font-bold
+                mt-2
+                text-2xl
+                font-bold
 
-        lg:text-4xl
-      "
+                lg:text-4xl
+              "
             >
               {totalPolicies}
             </h2>
@@ -387,37 +387,37 @@ export default function SlaPoliciesPage() {
 
           <Card
             className="
-      rounded-2xl
-      border border-zinc-200
-      bg-white
-      p-3
+              rounded-2xl
+              border border-zinc-200
+              bg-white
+              p-3
 
-      lg:p-5
+              lg:p-5
 
-      dark:border-white/10
-      dark:bg-zinc-900/40
-    "
+              dark:border-white/10
+              dark:bg-zinc-900/40
+            "
           >
             <p
               className="
-        text-[11px]
+                text-[11px]
 
-        lg:text-sm
-        text-zinc-500
-      "
+                lg:text-sm
+                text-zinc-500
+              "
             >
               Critical
             </p>
 
             <h2
               className="
-        mt-2
-        text-2xl
-        font-bold
-        text-red-500
+                mt-2
+                text-2xl
+                font-bold
+                text-red-500
 
-        lg:text-4xl
-      "
+                lg:text-4xl
+              "
             >
               {highPriorityPolicies}
             </h2>
@@ -425,37 +425,37 @@ export default function SlaPoliciesPage() {
 
           <Card
             className="
-      rounded-2xl
-      border border-zinc-200
-      bg-white
-      p-3
+              rounded-2xl
+              border border-zinc-200
+              bg-white
+              p-3
 
-      lg:p-5
+              lg:p-5
 
-      dark:border-white/10
-      dark:bg-zinc-900/40
-    "
+              dark:border-white/10
+              dark:bg-zinc-900/40
+            "
           >
             <p
               className="
-        text-[11px]
+                text-[11px]
 
-        lg:text-sm
-        text-zinc-500
-      "
+                lg:text-sm
+                text-zinc-500
+                "
             >
               Status
             </p>
 
             <h2
               className="
-        mt-2
-        text-xl
-        font-bold
-        text-emerald-500
+                mt-2
+                text-xl
+                font-bold
+                text-emerald-500
 
-        lg:text-3xl
-      "
+                lg:text-3xl
+              "
             >
               Active
             </h2>
@@ -568,7 +568,6 @@ export default function SlaPoliciesPage() {
                       rounded-xl
                       border-zinc-200
                       bg-zinc-50
-
                       dark:border-white/10
                       dark:bg-zinc-950
                     "
@@ -576,7 +575,7 @@ export default function SlaPoliciesPage() {
                     <SelectValue />
                   </SelectTrigger>
 
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={6} className="max-h-60">
                     <SelectItem value="LOW">
                       LOW
                     </SelectItem>
