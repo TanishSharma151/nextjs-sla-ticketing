@@ -20,10 +20,6 @@ import {
   getOrgId,
 } from '@/services/organizations';
 
-import {
-  getPolicies,
-} from '@/services/sla';
-
 import { Input }
   from '@/components/ui/input';
 
@@ -44,11 +40,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-type Policy = {
-  id: string;
-  name: string;
-  priority: string;
-};
+// type Policy = {
+//   id: string;
+//   name: string;
+//   priority: string;
+// };
 
 export default function CreateTicketPage() {
   const router =
@@ -74,11 +70,6 @@ export default function CreateTicketPage() {
   const [orgId, setOrgId] =
     useState('');
 
-  const [policies, setPolicies] =
-    useState<Policy[]>([]);
-
-  const [slaPolicyId, setSlaPolicyId] =
-    useState('');
 
   useEffect(() => {
     const init =
@@ -101,24 +92,6 @@ export default function CreateTicketPage() {
           setOrgId(
             fetchedOrgId,
           );
-
-          const fetchedPolicies =
-            await getPolicies(
-              fetchedOrgId,
-            );
-
-          setPolicies(
-            fetchedPolicies,
-          );
-
-          if (
-            fetchedPolicies.length >
-            0
-          ) {
-            setSlaPolicyId(
-              fetchedPolicies[0].id,
-            );
-          }
         } catch (error) {
           console.error(error);
         }
@@ -132,13 +105,15 @@ export default function CreateTicketPage() {
       try {
         setLoading(true);
 
+        console.log('Payload:', { title, description, priority, attachmentUrl, orgId }); // 👈 add this
+
+
         await createTicket({
           title,
           description,
           priority,
           attachmentUrl,
-          orgId,
-          slaPolicyId,
+          orgId
         });
 
         router.push(
@@ -273,15 +248,15 @@ export default function CreateTicketPage() {
                 {/* upload */}
                 <div
                   className="
-    rounded-2xl
-    border border-dashed
-    border-zinc-300
-    bg-zinc-50
-    p-5
+                    rounded-2xl
+                    border border-dashed
+                    border-zinc-300
+                    bg-zinc-50
+                    p-5
 
-    dark:border-white/10
-    dark:bg-white/[0.02]
-  "
+                    dark:border-white/10
+                    dark:bg-white/[0.02]
+                  "
                 >
                   <div className="mb-4">
                     <h2 className="font-semibold">
@@ -290,10 +265,10 @@ export default function CreateTicketPage() {
 
                     <p
                       className="
-        mt-1
-        text-sm
-        text-zinc-500
-      "
+                        mt-1
+                        text-sm
+                        text-zinc-500
+                      "
                     >
                       Upload screenshots,
                       logs, or PDFs
@@ -302,18 +277,18 @@ export default function CreateTicketPage() {
 
                   <div
                     className="
-      flex min-h-[140px]
-      items-center
-      justify-center
-      rounded-2xl
-      border border-dashed
-      border-zinc-300
-      bg-white
-      px-4
+                      flex min-h-[140px]
+                      items-center
+                      justify-center
+                      rounded-2xl
+                      border border-dashed
+                      border-zinc-300
+                      bg-white
+                      px-4
 
-      dark:border-white/10
-      dark:bg-black/20
-    "
+                      dark:border-white/10
+                      dark:bg-black/20
+                    "
                   >
                     <FileUpload
                       onUploadComplete={
@@ -325,16 +300,16 @@ export default function CreateTicketPage() {
                   {attachmentUrl && (
                     <div
                       className="
-        mt-4
-        rounded-xl
-        border border-emerald-500/20
-        bg-emerald-500/10
-        px-3 py-2
-        text-sm
-        text-emerald-600
+                        mt-4
+                        rounded-xl
+                        border border-emerald-500/20
+                        bg-emerald-500/10
+                        px-3 py-2
+                        text-sm
+                        text-emerald-600
 
-        dark:text-emerald-400
-      "
+                        dark:text-emerald-400
+                      "
                     >
                       File uploaded successfully
                     </div>
@@ -468,66 +443,6 @@ export default function CreateTicketPage() {
                       <SelectItem value="HIGH">
                         HIGH
                       </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* SLA */}
-                <div className="space-y-2">
-                  <label
-                    className="
-                      text-sm
-                      font-medium
-                      text-zinc-700
-
-                      dark:text-zinc-300
-                    "
-                  >
-                    SLA Policy
-                  </label>
-
-                  <Select
-                    value={slaPolicyId}
-                    onValueChange={
-                      setSlaPolicyId
-                    }
-                  >
-                    <SelectTrigger
-                      className="
-                        h-12
-                        rounded-xl
-                        border-zinc-200
-                        bg-zinc-50
-                        px-4
-
-                        dark:border-white/10
-                        dark:bg-black/40
-                      "
-                    >
-                      <SelectValue placeholder="Select SLA Policy" />
-                    </SelectTrigger>
-
-                    <SelectContent
-                      className="
-                        border border-zinc-200
-                        bg-white
-                        text-black
-
-                        dark:border-white/10
-                        dark:bg-zinc-950
-                        dark:text-white
-                      "
-                    >
-                      {policies.map(
-                        (policy) => (
-                          <SelectItem
-                            key={policy.id}
-                            value={policy.id}
-                          >
-                            {policy.name}
-                          </SelectItem>
-                        ),
-                      )}
                     </SelectContent>
                   </Select>
                 </div>

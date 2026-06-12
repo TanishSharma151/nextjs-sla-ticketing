@@ -50,8 +50,6 @@ export async function createTicket(
 
     orgId: string;
 
-    slaPolicyId: string;
-
     attachmentUrl?: string;
   },
 ) {

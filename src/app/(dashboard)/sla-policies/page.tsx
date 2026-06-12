@@ -546,11 +546,11 @@ export default function SlaPoliciesPage() {
               <div className="space-y-2">
                 <label
                   className="
-      text-sm
-      font-medium
-      text-zinc-600
-      dark:text-zinc-400
-    "
+                    text-sm
+                    font-medium
+                    text-zinc-600
+                    dark:text-zinc-400
+                  "
                 >
                   Priority
                 </label>
@@ -561,28 +561,28 @@ export default function SlaPoliciesPage() {
                 >
                   <SelectTrigger
                     className="
-        h-11
-        rounded-xl
-        border-zinc-200
-        bg-zinc-50
+                      h-11
+                      rounded-xl
+                      border-zinc-200
+                      bg-zinc-50
 
-        dark:border-white/10
-        dark:bg-zinc-950
-      "
+                      dark:border-white/10
+                      dark:bg-zinc-950
+                    "
                   >
                     <SelectValue />
                   </SelectTrigger>
 
                   <SelectContent
                     className="
-        rounded-xl
-        border-zinc-200
-        bg-white
-        shadow-xl
+                    rounded-xl
+                    border-zinc-200
+                    bg-white
+                    shadow-xl
 
-        dark:border-white/10
-        dark:bg-zinc-900
-      "
+                    dark:border-white/10
+                    dark:bg-zinc-900
+                    "
                   >
                     <SelectItem value="LOW">
                       LOW
