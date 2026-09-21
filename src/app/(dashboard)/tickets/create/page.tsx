@@ -40,12 +40,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-// type Policy = {
-//   id: string;
-//   name: string;
-//   priority: string;
-// };
-
 export default function CreateTicketPage() {
   const router =
     useRouter();
@@ -70,6 +64,8 @@ export default function CreateTicketPage() {
   const [orgId, setOrgId] =
     useState('');
 
+  const [error, setError] =
+    useState('');
 
   useEffect(() => {
     const init =
@@ -105,8 +101,7 @@ export default function CreateTicketPage() {
       try {
         setLoading(true);
 
-        console.log('Payload:', { title, description, priority, attachmentUrl, orgId }); // 👈 add this
-
+        setError('');
 
         await createTicket({
           title,
@@ -119,8 +114,13 @@ export default function CreateTicketPage() {
         router.push(
           '/dashboard',
         );
-      } catch (error) {
-        console.error(error);
+      } catch (err: any) {
+        console.error(err);
+
+        setError(
+          err?.response?.data?.message ||
+            'Failed to create ticket. Please try again.',
+        );
       } finally {
         setLoading(false);
       }
@@ -453,9 +453,25 @@ export default function CreateTicketPage() {
               <div
                 className="
                   shrink-0
+                  space-y-3
                   pt-4
                 "
               >
+                {error && (
+                  <p
+                    className="
+                      rounded-xl
+                      border border-red-500/20
+                      bg-red-500/10
+                      px-4 py-3
+                      text-sm
+                      text-red-500
+                    "
+                  >
+                    {error}
+                  </p>
+                )}
+
                 <Button
                   onClick={
                     handleCreate

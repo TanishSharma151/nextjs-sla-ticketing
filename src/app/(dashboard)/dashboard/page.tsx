@@ -94,14 +94,7 @@ export default function DashboardPage() {
 
     const initialize = async () => {
   try {
-    console.log('STEP 1: Calling getMe()');
-
     const user = await getMe();
-
-    console.log(
-      'STEP 2: getMe success',
-      user,
-    );
 
     const currentRole =
       user?.memberships?.[0]?.role;
@@ -121,17 +114,8 @@ export default function DashboardPage() {
 
     const fetchTickets =
       async () => {
-        console.log(
-          'STEP 3: Fetching tickets',
-        );
-
         const data =
           await getTickets();
-
-        console.log(
-          'STEP 4: Tickets loaded',
-          data,
-        );
 
         setTickets(data);
       };
@@ -192,8 +176,8 @@ export default function DashboardPage() {
   const openTickets =
     tickets.filter(
       (ticket) =>
-        ticket.status !==
-        'RESOLVED',
+        ticket.status ===
+        'OPEN',
     ).length;
 
   const breachedTickets =
