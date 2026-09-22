@@ -56,8 +56,9 @@ import {
 } from '@/components/ui/select';
 
 import {
-  getPriorityVariant,
-  getStatusVariant,
+  getPriorityBadgeClass,
+  getPriorityLabel,
+  getStatusBadgeClass,
 } from '@/lib/ticket-utils';
 
 type TicketEvent = {
@@ -401,19 +402,24 @@ export default function TicketPage() {
               </h1>
 
               <Badge
-                variant={getStatusVariant(
+                className={getStatusBadgeClass(
                   ticket.status,
                 )}
               >
-                {ticket.status}
+                {ticket.status.replaceAll(
+                  '_',
+                  ' ',
+                )}
               </Badge>
 
               <Badge
-                variant={getPriorityVariant(
+                className={getPriorityBadgeClass(
                   ticket.priority,
                 )}
               >
-                {ticket.priority}
+                {getPriorityLabel(
+                  ticket.priority,
+                )}
               </Badge>
 
               {ticket.isBreached ? (

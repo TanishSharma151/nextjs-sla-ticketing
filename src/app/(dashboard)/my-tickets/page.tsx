@@ -26,6 +26,12 @@ import {
   Ticket,
 } from 'lucide-react';
 
+import {
+  getPriorityBadgeClass,
+  getPriorityLabel,
+  getStatusBadgeClass,
+} from '@/lib/ticket-utils';
+
 type TicketType = {
   id: string;
 
@@ -391,38 +397,38 @@ export default function MyTicketsPage() {
                 </p>
               </Card>
             ) : (
-              tickets.map((ticket) => (
-                <Card
-                  key={ticket.id}
-                  onClick={() =>
-                    router.push(
-                      `/tickets/${ticket.id}`,
-                    )
-                  }
-                  className="
-                    group
-                    cursor-pointer
-                    rounded-3xl
-                    border border-zinc-200
-                    bg-white
-                    px-5 py-4
-                    shadow-sm
-                    transition-all
-                    duration-200
-                    hover:border-violet-300
-                    hover:shadow-md
+              <div
+                className="
+                  divide-y divide-zinc-200
+                  rounded-3xl
+                  border border-zinc-200
+                  bg-white
+                  px-5
 
-                    dark:border-white/10
-                    dark:bg-zinc-900/35
-                    dark:backdrop-blur-xl
-                    dark:hover:border-white/20
-                    dark:hover:bg-white/[0.03]
-                  "
-                >
+                  dark:divide-white/10
+                  dark:border-white/10
+                  dark:bg-zinc-900/35
+                "
+              >
+                {tickets.map((ticket) => (
                   <div
+                    key={ticket.id}
+                    onClick={() =>
+                      router.push(
+                        `/tickets/${ticket.id}`,
+                      )
+                    }
                     className="
-                      flex flex-col
-                      gap-4
+                      group
+                      flex flex-col gap-3
+                      cursor-pointer
+                      py-4
+                      transition-colors
+                      duration-150
+
+                      hover:bg-zinc-50
+
+                      dark:hover:bg-white/[0.02]
 
                       md:flex-row
                       md:items-center
@@ -434,7 +440,7 @@ export default function MyTicketsPage() {
                     <div>
                       <h2
                         className="
-                          text-lg
+                          text-base
                           font-semibold
                           transition-colors
                           group-hover:text-violet-500
@@ -447,7 +453,7 @@ export default function MyTicketsPage() {
 
                       <div
                         className="
-                          mt-2
+                          mt-1
                           flex items-center
                           gap-2
                           text-sm
@@ -465,38 +471,33 @@ export default function MyTicketsPage() {
                     </div>
 
                     {/* RIGHT */}
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
 
                       <Badge
-                        className="
-                          border border-blue-500/20
-                          bg-blue-500/10
-                          text-blue-600
-
-                          dark:text-blue-300
-                        "
+                        className={getPriorityBadgeClass(
+                          ticket.priority,
+                        )}
                       >
-                        {ticket.status}
+                        {getPriorityLabel(
+                          ticket.priority,
+                        )}
                       </Badge>
 
                       <Badge
-                        className="
-                          border border-zinc-200
-                          bg-zinc-100
-                          text-zinc-700
-
-                          dark:border-white/10
-                          dark:bg-white/[0.04]
-                          dark:text-zinc-300
-                        "
+                        className={getStatusBadgeClass(
+                          ticket.status,
+                        )}
                       >
-                        {ticket.priority}
+                        {ticket.status.replaceAll(
+                          '_',
+                          ' ',
+                        )}
                       </Badge>
 
                     </div>
                   </div>
-                </Card>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </div>
