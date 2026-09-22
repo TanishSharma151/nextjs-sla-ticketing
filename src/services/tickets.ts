@@ -51,11 +51,27 @@ export async function createTicket(
     orgId: string;
 
     attachmentUrl?: string;
+
+    assigneeId?: string;
   },
 ) {
   const response = await api.post(
     '/tickets',
     data,
+  );
+
+  return response.data;
+}
+
+export async function updateSla(
+  ticketId: string,
+  slaDueAt: string,
+) {
+  const response = await api.patch(
+    `/tickets/${ticketId}/sla`,
+    {
+      slaDueAt,
+    },
   );
 
   return response.data;

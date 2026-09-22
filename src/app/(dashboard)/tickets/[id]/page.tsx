@@ -15,6 +15,7 @@ import {
   updateTicketStatus,
   assignTicket,
   deleteTicket,
+  updateSla,
 } from '@/services/tickets';
 
 import {
@@ -116,6 +117,9 @@ export default function TicketPage() {
     useState<Member[]>([]);
 
   const [selectedAssignee, setSelectedAssignee] =
+    useState('');
+
+  const [newSlaDueAt, setNewSlaDueAt] =
     useState('');
 
   const [comment, setComment] =
@@ -247,6 +251,29 @@ export default function TicketPage() {
         );
 
         setSelectedAssignee('');
+
+        await fetchTicket();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const handleSlaOverride =
+    async () => {
+      if (
+        !newSlaDueAt ||
+        !ticket
+      ) {
+        return;
+      }
+
+      try {
+        await updateSla(
+          ticket.id,
+          new Date(newSlaDueAt).toISOString(),
+        );
+
+        setNewSlaDueAt('');
 
         await fetchTicket();
       } catch (error) {
@@ -999,6 +1026,63 @@ export default function TicketPage() {
                         "
                     >
                       Assign Ticket
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* SLA OVERRIDE */}
+              {role === 'ADMIN' && (
+                <div>
+                  <p
+                    className="
+                      mb-2
+                      text-xs
+                      font-medium
+                      uppercase
+                      tracking-wider
+                      text-zinc-500
+                    "
+                  >
+                    Override SLA Due Date
+                  </p>
+
+                  <div className="space-y-3">
+                    <Input
+                      type="datetime-local"
+                      value={newSlaDueAt}
+                      onChange={(e) =>
+                        setNewSlaDueAt(
+                          e.target.value,
+                        )
+                      }
+                      className="
+                        h-11
+                        border-zinc-200
+                        bg-zinc-50
+
+                        dark:border-white/10
+                        dark:bg-zinc-950
+                      "
+                    />
+
+                    <Button
+                      onClick={handleSlaOverride}
+                      disabled={!newSlaDueAt}
+                      className="
+                        h-11
+                        w-full
+                        rounded-xl
+                        bg-black
+                        text-white
+
+                        hover:bg-zinc-800
+
+                        dark:bg-white
+                        dark:text-black
+                      "
+                    >
+                      Update SLA
                     </Button>
                   </div>
                 </div>

@@ -18,6 +18,7 @@ import {
 
 import {
   getOrgId,
+  getMembers,
 } from '@/services/organizations';
 
 import { Input }
@@ -67,6 +68,17 @@ export default function CreateTicketPage() {
   const [error, setError] =
     useState('');
 
+  const [role, setRole] =
+    useState('');
+
+  const [members, setMembers] =
+    useState<
+      { user: { id: string; email: string }; role: string }[]
+    >([]);
+
+  const [assigneeId, setAssigneeId] =
+    useState('');
+
   useEffect(() => {
     const init =
       async () => {
@@ -88,6 +100,18 @@ export default function CreateTicketPage() {
           setOrgId(
             fetchedOrgId,
           );
+
+          const currentRole =
+            user?.memberships?.[0]?.role;
+
+          setRole(currentRole);
+
+          if (currentRole === 'ADMIN') {
+            const orgMembers =
+              await getMembers(fetchedOrgId);
+
+            setMembers(orgMembers);
+          }
         } catch (error) {
           console.error(error);
         }
@@ -108,7 +132,8 @@ export default function CreateTicketPage() {
           description,
           priority,
           attachmentUrl,
-          orgId
+          orgId,
+          assigneeId: assigneeId || undefined,
         });
 
         router.push(
@@ -446,6 +471,71 @@ export default function CreateTicketPage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* assignee (admin only) */}
+                {role === 'ADMIN' && (
+                  <div className="space-y-2">
+                    <label
+                      className="
+                        text-sm
+                        font-medium
+                        text-zinc-700
+
+                        dark:text-zinc-300
+                      "
+                    >
+                      Assign To (optional)
+                    </label>
+
+                    <Select
+                      value={assigneeId}
+                      onValueChange={
+                        setAssigneeId
+                      }
+                    >
+                      <SelectTrigger
+                        className="
+                          h-12
+                          rounded-xl
+                          border-zinc-200
+                          bg-zinc-50
+                          px-4
+
+                          dark:border-white/10
+                          dark:bg-black/40
+                        "
+                      >
+                        <SelectValue placeholder="Unassigned" />
+                      </SelectTrigger>
+
+                      <SelectContent
+                        className="
+                          border border-zinc-200
+                          bg-white
+                          text-black
+
+                          dark:border-white/10
+                          dark:bg-zinc-950
+                          dark:text-white
+                        "
+                      >
+                        {members
+                          .filter(
+                            (member) =>
+                              member.role !== 'CLIENT',
+                          )
+                          .map((member) => (
+                            <SelectItem
+                              key={member.user.id}
+                              value={member.user.id}
+                            >
+                              {member.user.email}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
               </div>
 
