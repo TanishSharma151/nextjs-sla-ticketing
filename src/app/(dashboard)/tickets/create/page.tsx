@@ -154,29 +154,31 @@ export default function CreateTicketPage() {
   return (
     <div
       className="
-        h-[calc(100vh-64px)]
-        overflow-hidden
         bg-zinc-100
         text-black
 
         dark:bg-[#09090B]
         dark:text-white
+
+        lg:h-[calc(100vh-64px)]
+        lg:overflow-hidden
       "
     >
       <div
         className="
           mx-auto
-          h-full
           max-w-7xl
           p-4
+
+          lg:h-full
         "
       >
         <div
           className="
             grid
-            h-full
             gap-4
 
+            lg:h-full
             lg:grid-cols-[1fr_320px]
           "
         >
@@ -186,14 +188,15 @@ export default function CreateTicketPage() {
             className="
               relative
               flex
-              h-full
               flex-col
-              overflow-hidden
               rounded-3xl
               border border-zinc-200
               bg-white
               p-6
               shadow-sm
+
+              lg:h-full
+              lg:overflow-hidden
 
               dark:border-white/10
               dark:bg-gradient-to-br
@@ -260,13 +263,14 @@ export default function CreateTicketPage() {
                 </p>
               </div>
 
-              {/* SCROLLABLE FORM */}
+              {/* SCROLLABLE FORM (only scrolls independently at lg+, where the panel has a fixed height) */}
               <div
                 className="
                   flex-1
                   space-y-5
-                  overflow-y-auto
-                  pr-2
+
+                  lg:overflow-y-auto
+                  lg:pr-2
                 "
               >
 

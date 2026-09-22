@@ -98,23 +98,26 @@ export default function MyTicketsPage() {
   return (
     <div
       className="
-        h-[calc(100vh-64px)]
-        overflow-hidden
         bg-zinc-100
         text-black
 
         dark:bg-[#09090B]
         dark:text-white
+
+        lg:h-[calc(100vh-64px)]
+        lg:overflow-hidden
       "
     >
       <div
         className="
           mx-auto
-          flex h-full
+          flex
           max-w-7xl
           flex-col
           gap-5
           p-5
+
+          lg:h-full
         "
       >
 
@@ -341,12 +344,13 @@ export default function MyTicketsPage() {
           </Card>
         </div>
 
-        {/* TICKETS LIST */}
+        {/* TICKETS LIST (only scrolls independently at lg+) */}
         <div
           className="
             flex-1
-            overflow-y-auto
-            pr-1
+
+            lg:overflow-y-auto
+            lg:pr-1
           "
         >
           <div className="space-y-3">
