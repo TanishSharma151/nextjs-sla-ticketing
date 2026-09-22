@@ -392,17 +392,44 @@ export default function LoginPage() {
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <label
+                  <div
                     className="
-                      text-sm
-                      font-medium
-                      text-zinc-700
-
-                      dark:text-zinc-300
+                      flex
+                      items-center
+                      justify-between
                     "
                   >
-                    Password
-                  </label>
+                    <label
+                      className="
+                        text-sm
+                        font-medium
+                        text-zinc-700
+
+                        dark:text-zinc-300
+                      "
+                    >
+                      Password
+                    </label>
+
+                    <button
+                      onClick={() =>
+                        router.push(
+                          '/forgot-password',
+                        )
+                      }
+                      className="
+                        text-sm
+                        font-medium
+                        text-zinc-500
+
+                        hover:text-black
+
+                        dark:hover:text-white
+                      "
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
 
                   <Input
                     type="password"

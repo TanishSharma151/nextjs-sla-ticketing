@@ -37,17 +37,36 @@ export async function logout() {
 }
 
 export async function getMe() {
-  console.log(
-    'Calling /auth/me',
-  );
-
   const response = await api.get(
     '/auth/me',
   );
 
-  console.log(
-    'GET ME RESPONSE',
-    response.data,
+  return response.data;
+}
+
+export async function forgotPassword(
+  email: string,
+) {
+  const response = await api.post(
+    '/auth/forgot-password',
+    {
+      email,
+    },
+  );
+
+  return response.data;
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+) {
+  const response = await api.post(
+    '/auth/reset-password',
+    {
+      token,
+      password,
+    },
   );
 
   return response.data;
