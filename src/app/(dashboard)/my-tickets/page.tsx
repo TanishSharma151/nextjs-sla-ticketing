@@ -32,6 +32,11 @@ import {
   getStatusBadgeClass,
 } from '@/lib/ticket-utils';
 
+import PaginationControls
+  from '@/components/dashboard/pagination-controls';
+
+const TICKETS_PER_PAGE = 8;
+
 type TicketType = {
   id: string;
 
@@ -50,6 +55,9 @@ export default function MyTicketsPage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [page, setPage] =
+    useState(1);
 
   const router =
     useRouter();
@@ -100,6 +108,21 @@ export default function MyTicketsPage() {
         ticket.status ===
         'RESOLVED',
     ).length;
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        tickets.length /
+        TICKETS_PER_PAGE,
+      ),
+    );
+
+  const paginatedTickets =
+    tickets.slice(
+      (page - 1) * TICKETS_PER_PAGE,
+      page * TICKETS_PER_PAGE,
+    );
 
   return (
     <div
@@ -410,7 +433,7 @@ export default function MyTicketsPage() {
                   dark:bg-zinc-900/35
                 "
               >
-                {tickets.map((ticket) => (
+                {paginatedTickets.map((ticket) => (
                   <div
                     key={ticket.id}
                     onClick={() =>
@@ -497,6 +520,13 @@ export default function MyTicketsPage() {
                     </div>
                   </div>
                 ))}
+
+                <PaginationControls
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                  className="px-0"
+                />
               </div>
             )}
           </div>

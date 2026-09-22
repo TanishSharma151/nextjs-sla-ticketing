@@ -48,6 +48,11 @@ import {
   User,
 } from 'lucide-react';
 
+import PaginationControls
+  from '@/components/dashboard/pagination-controls';
+
+const TICKETS_PER_PAGE = 8;
+
 type Ticket = {
   id: string;
 
@@ -89,6 +94,9 @@ export default function DashboardPage() {
 
   const [statusFilter, setStatusFilter] =
     useState('ALL');
+
+  const [page, setPage] =
+    useState(1);
 
   const [role, setRole] =
     useState('');
@@ -214,6 +222,21 @@ export default function DashboardPage() {
           matchesStatus
         );
       },
+    );
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        filteredTickets.length /
+        TICKETS_PER_PAGE,
+      ),
+    );
+
+  const paginatedTickets =
+    filteredTickets.slice(
+      (page - 1) * TICKETS_PER_PAGE,
+      page * TICKETS_PER_PAGE,
     );
 
   return (
@@ -448,20 +471,24 @@ export default function DashboardPage() {
               <Input
                 placeholder="Search tickets..."
                 value={search}
-                onChange={(e) =>
+                onChange={(e) => {
                   setSearch(
                     e.target.value,
-                  )
-                }
+                  );
+
+                  setPage(1);
+                }}
               />
 
               <select
                 value={statusFilter}
-                onChange={(e) =>
+                onChange={(e) => {
                   setStatusFilter(
                     e.target.value,
-                  )
-                }
+                  );
+
+                  setPage(1);
+                }}
                 className="
                 h-11
                 rounded-xl
@@ -505,7 +532,7 @@ export default function DashboardPage() {
                   dark:divide-white/10
                 "
               >
-                {filteredTickets.map((ticket) => (
+                {paginatedTickets.map((ticket) => (
                   <div
                     key={ticket.id}
                     onClick={() =>
@@ -631,6 +658,12 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+
+          <PaginationControls
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         </Card>
       </div>
     </div>
