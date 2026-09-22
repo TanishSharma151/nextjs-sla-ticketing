@@ -394,6 +394,7 @@ export default function Sidebar() {
                   }
                   className={`
                     group
+                    relative
                     flex items-center
                     gap-3
                     rounded-2xl
@@ -405,12 +406,10 @@ export default function Sidebar() {
 
                     ${active
                       ? `
-                          bg-black
-                          text-white
-                          shadow-lg
+                          bg-violet-500/10
+                          text-violet-600
 
-                          dark:bg-white
-                          dark:text-black
+                          dark:text-violet-400
                         `
                       : `
                           text-zinc-600
@@ -424,6 +423,18 @@ export default function Sidebar() {
                     }
                   `}
                 >
+                  {active && (
+                    <span
+                      className="
+                        absolute left-0 top-1/2
+                        h-5 w-1
+                        -translate-y-1/2
+                        rounded-full
+                        bg-violet-500
+                      "
+                    />
+                  )}
+
                   <Icon size={18} />
 
                   <span>

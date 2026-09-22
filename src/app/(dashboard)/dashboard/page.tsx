@@ -39,9 +39,14 @@ import {
 } from '@/components/ui/table';
 
 import {
-  getPriorityVariant,
-  getStatusVariant,
+  getPriorityBadgeClass,
+  getPriorityLabel,
+  getStatusBadgeClass,
 } from '@/lib/ticket-utils';
+
+import {
+  User,
+} from 'lucide-react';
 
 type Ticket = {
   id: string;
@@ -372,7 +377,7 @@ export default function DashboardPage() {
           lg:text-5xl
 
           ${item.danger
-                    ? 'text-red-500'
+                    ? 'text-violet-500'
                     : ''
                   }
         `}
@@ -490,12 +495,18 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* MOBILE CARDS */}
-          <div className="p-5">
+          {/* TICKET ROWS */}
+          <div className="px-5">
             {filteredTickets.length > 0 ? (
-              <div className="grid gap-4">
+              <div
+                className="
+                  divide-y divide-zinc-200
+
+                  dark:divide-white/10
+                "
+              >
                 {filteredTickets.map((ticket) => (
-                  <Card
+                  <div
                     key={ticket.id}
                     onClick={() =>
                       router.push(
@@ -503,99 +514,85 @@ export default function DashboardPage() {
                       )
                     }
                     className="
+                      flex flex-col gap-3
                       cursor-pointer
-                      rounded-2xl
-                      border
-                      border-zinc-200
-                      bg-white
-                      p-5
-                      transition-all
-                      duration-200
-                      hover:-translate-y-1
-                      hover:shadow-lg
+                      py-5
+                      transition-colors
+                      duration-150
 
-                      dark:border-white/10
-                      dark:bg-zinc-900/40
-                      "
+                      hover:bg-zinc-50
+
+                      dark:hover:bg-white/[0.02]
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
+                    "
                   >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <h3
-                          className="
-                            truncate
-                            text-lg
-                            font-semibold
+                    <div className="min-w-0">
+                      <h3
+                        className="
+                          truncate
+                          text-base
+                          font-semibold
+                        "
+                      >
+                        {ticket.title}
+                      </h3>
+
+                      <p
+                        className="
+                          mt-1
+                          text-sm
+                          text-zinc-500
                           "
-                        >
-                          {ticket.title}
-                        </h3>
-
-                        <p
-                          className="
-                            mt-1
-                            text-sm
-                            text-zinc-500
-                            "
-                        >
-                          {ticket.requester?.email ||
-                            '-'}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge
-                          variant={getStatusVariant(
-                            ticket.status,
-                          )}
-                        >
-                          {ticket.status}
-                        </Badge>
-
-                        <Badge
-                          variant={getPriorityVariant(
-                            ticket.priority,
-                          )}
-                        >
-                          {ticket.priority}
-                        </Badge>
-                      </div>
+                      >
+                        {ticket.requester?.email ||
+                          '-'}
+                      </p>
                     </div>
 
                     <div
                       className="
-                        mt-4
-                        flex items-center
-                        justify-between
-                        border-t
-                        border-zinc-200
-                        pt-4
-
-                        dark:border-white/10
+                        flex flex-wrap
+                        items-center
+                        gap-2
                       "
                     >
-                      <div>
-                        <p
-                          className="
-                          text-xs
-                          uppercase
-                          tracking-wide
+                      <Badge
+                        className={getPriorityBadgeClass(
+                          ticket.priority,
+                        )}
+                      >
+                        {getPriorityLabel(
+                          ticket.priority,
+                        )}
+                      </Badge>
+
+                      <Badge
+                        className={getStatusBadgeClass(
+                          ticket.status,
+                        )}
+                      >
+                        {ticket.status.replaceAll(
+                          '_',
+                          ' ',
+                        )}
+                      </Badge>
+
+                      <span
+                        className="
+                          flex items-center
+                          gap-1
+                          text-sm
                           text-zinc-500
                         "
-                        >
-                          Assigned
-                        </p>
+                      >
+                        <User size={14} />
 
-                        <p
-                          className="
-                            mt-1
-                            text-sm
-                            font-medium
-                          "
-                        >
-                          {ticket.assignedTo?.email ||
-                            'Unassigned'}
-                        </p>
-                      </div>
+                        {ticket.assignedTo?.email ||
+                          'Unassigned'}
+                      </span>
 
                       {ticket.isBreached ? (
                         <Badge
@@ -619,7 +616,7 @@ export default function DashboardPage() {
                         </Badge>
                       )}
                     </div>
-                  </Card>
+                  </div>
                 ))}
               </div>
             ) : (
