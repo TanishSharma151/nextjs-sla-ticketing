@@ -162,7 +162,7 @@ export default function SignupPage() {
                   dark:text-black
                 "
               >
-                S
+                D
               </div>
 
               <div>
@@ -173,7 +173,7 @@ export default function SignupPage() {
                     tracking-tight
                   "
                 >
-                  SLA Desk
+                  DeskForge
                 </h1>
 
                 <p

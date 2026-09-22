@@ -215,7 +215,7 @@ export default function Sidebar() {
               dark:text-black
             "
           >
-            S
+            D
           </div>
 
           <div>
@@ -228,7 +228,7 @@ export default function Sidebar() {
                 dark:text-white
               "
             >
-              SLA Desk
+              DeskForge
             </h1>
           </div>
         </div>
@@ -345,7 +345,7 @@ export default function Sidebar() {
                 dark:text-black
               "
             >
-              S
+              D
             </div>
 
             <div>
@@ -359,7 +359,7 @@ export default function Sidebar() {
                   dark:text-white
                 "
               >
-                SLA Desk
+                DeskForge
               </h1>
 
               <p

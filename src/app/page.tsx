@@ -72,12 +72,12 @@ export default function HomePage() {
                 dark:text-black
               "
             >
-              S
+              D
             </div>
 
             <div>
               <h1 className="text-2xl font-bold">
-                SLA Desk
+                DeskForge
               </h1>
 
               <p

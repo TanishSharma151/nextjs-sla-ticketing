@@ -8,7 +8,7 @@ import Navbar
   from '@/components/dashboard/navbar';
 
 export const metadata: Metadata = {
-  title: 'SLA Desk',
+  title: 'DeskForge',
 
   description:
     'Modern Helpdesk Platform',

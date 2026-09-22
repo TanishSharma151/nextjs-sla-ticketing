@@ -8,7 +8,7 @@ import {
 } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'SLA Desk',
+  title: 'DeskForge',
   description:
     'Helpdesk platform',
 };

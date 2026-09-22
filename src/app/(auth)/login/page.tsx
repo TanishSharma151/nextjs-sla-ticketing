@@ -129,7 +129,7 @@ export default function LoginPage() {
                   dark:text-black
                 "
               >
-                S
+                D
               </div>
 
               <div>
@@ -140,7 +140,7 @@ export default function LoginPage() {
                     tracking-tight
                   "
                 >
-                  SLA Desk
+                  DeskForge
                 </h1>
 
                 <p
