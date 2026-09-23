@@ -20,6 +20,7 @@ import {
   PlusCircle,
   Users,
   ShieldCheck,
+  Trash2,
   LogOut,
   Menu,
   X,
@@ -175,6 +176,12 @@ export default function Sidebar() {
         name: 'SLA Policies',
         href: '/sla-policies',
         icon: ShieldCheck,
+      },
+
+      {
+        name: 'Deleted Tickets',
+        href: '/tickets/deleted',
+        icon: Trash2,
       },
     );
   }

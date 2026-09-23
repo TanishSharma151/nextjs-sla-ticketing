@@ -101,3 +101,22 @@ export async function deleteTicket(
 
   return response.data;
 }
+
+export async function getDeletedTickets() {
+  const response = await api.get(
+    '/tickets/deleted',
+  );
+
+  return response.data;
+}
+
+export async function permanentlyDeleteTicket(
+  ticketId: string,
+) {
+  const response =
+    await api.delete(
+      `/tickets/${ticketId}/permanent`,
+    );
+
+  return response.data;
+}

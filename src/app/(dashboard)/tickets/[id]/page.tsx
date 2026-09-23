@@ -810,6 +810,12 @@ export default function TicketPage() {
                               {event.type ===
                                 'SLA_BREACHED' &&
                                 'SLA breached automatically'}
+
+                              {event.type ===
+                                'SLA_OVERRIDDEN' &&
+                                `Overrode SLA due date to ${new Date(
+                                  event.metadata?.newSlaDueAt,
+                                ).toLocaleString()}`}
                             </p>
                           </div>
                         </div>
