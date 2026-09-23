@@ -816,6 +816,14 @@ export default function TicketPage() {
                                 `Overrode SLA due date to ${new Date(
                                   event.metadata?.newSlaDueAt,
                                 ).toLocaleString()}`}
+
+                              {event.type ===
+                                'DELETED' &&
+                                'Deleted the ticket'}
+
+                              {event.type ===
+                                'RESTORED' &&
+                                'Restored the ticket from trash'}
                             </p>
                           </div>
                         </div>

@@ -12,6 +12,7 @@ import {
 import {
   getDeletedTickets,
   permanentlyDeleteTicket,
+  restoreTicket,
 } from '@/services/tickets';
 
 import {
@@ -29,6 +30,7 @@ import {
 import {
   Trash2,
   AlertTriangle,
+  RotateCcw,
 } from 'lucide-react';
 
 import {
@@ -66,6 +68,9 @@ export default function DeletedTicketsPage() {
     useState<string | null>(null);
 
   const [deletingId, setDeletingId] =
+    useState<string | null>(null);
+
+  const [restoringId, setRestoringId] =
     useState<string | null>(null);
 
   const fetchDeletedTickets =
@@ -138,6 +143,28 @@ export default function DeletedTicketsPage() {
       } finally {
         setDeletingId(null);
         setConfirmingId(null);
+      }
+    };
+
+  const handleRestore =
+    async (ticketId: string) => {
+      try {
+        setRestoringId(ticketId);
+
+        await restoreTicket(
+          ticketId,
+        );
+
+        setTickets((prev) =>
+          prev.filter(
+            (ticket) =>
+              ticket.id !== ticketId,
+          ),
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setRestoringId(null);
       }
     };
 
@@ -460,6 +487,44 @@ export default function DeletedTicketsPage() {
                           "
                         >
                           Cancel
+                        </button>
+                      )}
+
+                    {confirmingId !==
+                      ticket.id && (
+                        <button
+                          onClick={() =>
+                            handleRestore(
+                              ticket.id,
+                            )
+                          }
+                          disabled={
+                            restoringId ===
+                            ticket.id
+                          }
+                          className="
+                            flex items-center
+                            gap-2
+                            rounded-xl
+                            border border-emerald-500/20
+                            bg-emerald-500/10
+                            px-4 py-2
+                            text-sm
+                            font-medium
+                            text-emerald-500
+                            transition-colors
+
+                            hover:bg-emerald-500/20
+
+                            disabled:opacity-50
+                          "
+                        >
+                          <RotateCcw size={14} />
+
+                          {restoringId ===
+                            ticket.id
+                            ? 'Restoring...'
+                            : 'Restore'}
                         </button>
                       )}
 

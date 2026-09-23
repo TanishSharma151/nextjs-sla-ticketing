@@ -110,6 +110,17 @@ export async function getDeletedTickets() {
   return response.data;
 }
 
+export async function restoreTicket(
+  ticketId: string,
+) {
+  const response =
+    await api.patch(
+      `/tickets/${ticketId}/restore`,
+    );
+
+  return response.data;
+}
+
 export async function permanentlyDeleteTicket(
   ticketId: string,
 ) {
