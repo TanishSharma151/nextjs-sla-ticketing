@@ -178,6 +178,22 @@ export default function TicketPage() {
     if (!ticket?.slaDueAt)
       return;
 
+    if (ticket.status !== 'OPEN') {
+      // SLA clock is paused whenever the ticket isn't
+      // OPEN - slaDueAt is frozen server-side until it
+      // reopens, so a live countdown here would be
+      // misleading.
+      setTimeLeft(
+        ticket.status === 'RESOLVED'
+          ? 'Resolved'
+          : ticket.status === 'CLOSED'
+            ? 'Closed'
+            : 'Paused',
+      );
+
+      return;
+    }
+
     const interval =
       setInterval(() => {
         const diff =
