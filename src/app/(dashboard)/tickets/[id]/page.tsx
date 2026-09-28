@@ -61,6 +61,20 @@ import {
   getStatusBadgeClass,
 } from '@/lib/ticket-utils';
 
+import {
+  Ticket as TicketIcon,
+  User,
+  Clock,
+  Paperclip,
+  PlusCircle,
+  UserPlus,
+  RefreshCw,
+  AlertTriangle,
+  Trash2 as Trash2Icon,
+  RotateCcw,
+  ShieldAlert,
+} from 'lucide-react';
+
 type TicketEvent = {
   id: string;
   type: string;
@@ -95,6 +109,15 @@ type Ticket = {
   comments: Comment[];
   slaDueAt?: string;
   attachmentUrl?: string;
+  createdAt?: string;
+
+  assignedTo?: {
+    email: string;
+  };
+
+  requester?: {
+    email: string;
+  };
 };
 
 type Member = {
@@ -157,12 +180,14 @@ export default function TicketPage() {
 
         setTicket(data);
 
-        const orgMembers =
-          await getMembers(
-            data.orgId,
-          );
+        if (currentRole === 'ADMIN') {
+          const orgMembers =
+            await getMembers(
+              data.orgId,
+            );
 
-        setMembers(orgMembers);
+          setMembers(orgMembers);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -321,13 +346,74 @@ export default function TicketPage() {
       }
     };
 
+  const getEventVisual =
+    (type: string) => {
+      switch (type) {
+        case 'CREATED':
+          return {
+            Icon: PlusCircle,
+            className:
+              'bg-violet-500/10 text-violet-500',
+          };
+
+        case 'ASSIGNED':
+          return {
+            Icon: UserPlus,
+            className:
+              'bg-blue-500/10 text-blue-500',
+          };
+
+        case 'STATUS_CHANGED':
+          return {
+            Icon: RefreshCw,
+            className:
+              'bg-zinc-500/10 text-zinc-500',
+          };
+
+        case 'SLA_BREACHED':
+          return {
+            Icon: AlertTriangle,
+            className:
+              'bg-red-500/10 text-red-500',
+          };
+
+        case 'SLA_OVERRIDDEN':
+          return {
+            Icon: Clock,
+            className:
+              'bg-amber-500/10 text-amber-500',
+          };
+
+        case 'DELETED':
+          return {
+            Icon: Trash2Icon,
+            className:
+              'bg-red-500/10 text-red-500',
+          };
+
+        case 'RESTORED':
+          return {
+            Icon: RotateCcw,
+            className:
+              'bg-emerald-500/10 text-emerald-500',
+          };
+
+        default:
+          return {
+            Icon: RefreshCw,
+            className:
+              'bg-zinc-500/10 text-zinc-500',
+          };
+      }
+    };
+
   const handleDelete =
     async () => {
       if (!ticket) return;
 
       const confirmed =
         window.confirm(
-          'Delete this ticket permanently?',
+          'Move this ticket to trash? You can restore it later from Deleted Tickets.',
         );
 
       if (!confirmed) return;
@@ -389,116 +475,213 @@ export default function TicketPage() {
         {/* HEADER */}
         <Card
           className="
+            relative
+            overflow-hidden
             rounded-3xl
             border border-zinc-200
-            bg-white
+            bg-gradient-to-br
+            from-white
+            via-zinc-100
+            to-zinc-200
             p-6
 
             dark:border-white/10
-            dark:bg-zinc-900/40
+            dark:from-zinc-900
+            dark:via-black
+            dark:to-zinc-950
           "
         >
-          <div className="flex flex-col gap-5">
+          <div
+            className="
+              absolute right-0 top-0
+              h-64 w-64
+              rounded-full
+              bg-violet-500/10
+              blur-3xl
+            "
+          />
+
+          <div
+            className="
+              relative z-10
+              flex flex-wrap
+              items-start
+              gap-4
+            "
+          >
+            <div
+              className="
+                flex h-14 w-14
+                shrink-0
+                items-center
+                justify-center
+                rounded-2xl
+                border border-zinc-200
+                bg-white/70
+
+                dark:border-white/10
+                dark:bg-white/5
+              "
+            >
+              <TicketIcon
+                className="
+                  h-6 w-6
+                  text-black
+
+                  dark:text-zinc-300
+                "
+              />
+            </div>
 
             <div
               className="
-                flex flex-wrap
-                items-center
-                gap-3
+                flex flex-1
+                flex-col gap-3
               "
             >
-              <h1
+              <div
                 className="
-                  text-3xl
-                  font-bold
-                  tracking-tight
+                  flex flex-wrap
+                  items-center
+                  gap-3
                 "
               >
-                {ticket.title}
-              </h1>
-
-              <Badge
-                className={getStatusBadgeClass(
-                  ticket.status,
-                )}
-              >
-                {ticket.status.replaceAll(
-                  '_',
-                  ' ',
-                )}
-              </Badge>
-
-              <Badge
-                className={getPriorityBadgeClass(
-                  ticket.priority,
-                )}
-              >
-                {getPriorityLabel(
-                  ticket.priority,
-                )}
-              </Badge>
-
-              {ticket.isBreached ? (
-                <Badge
+                <h1
                   className="
-                    border border-red-500/20
-                    bg-red-500/10
-                    text-red-500
+                    text-3xl
+                    font-bold
+                    tracking-tight
                   "
                 >
-                  SLA Breached
-                </Badge>
-              ) : (
+                  {ticket.title}
+                </h1>
+
                 <Badge
+                  className={getStatusBadgeClass(
+                    ticket.status,
+                  )}
+                >
+                  {ticket.status.replaceAll(
+                    '_',
+                    ' ',
+                  )}
+                </Badge>
+
+                <Badge
+                  className={getPriorityBadgeClass(
+                    ticket.priority,
+                  )}
+                >
+                  {getPriorityLabel(
+                    ticket.priority,
+                  )}
+                </Badge>
+
+                {ticket.isBreached ? (
+                  <Badge
+                    className="
+                      border border-red-500/20
+                      bg-red-500/10
+                      text-red-500
+                    "
+                  >
+                    SLA Breached
+                  </Badge>
+                ) : (
+                  <Badge
+                    className="
+                      border border-emerald-500/20
+                      bg-emerald-500/10
+                      text-emerald-500
+                    "
+                  >
+                    {timeLeft ||
+                      'SLA Active'}
+                  </Badge>
+                )}
+              </div>
+
+              <p
+                className="
+                  max-w-4xl
+                  text-sm
+                  leading-7
+                  text-zinc-600
+
+                  dark:text-zinc-400
+                "
+              >
+                {ticket.description}
+              </p>
+
+              <div
+                className="
+                  flex flex-wrap
+                  items-center
+                  gap-4
+                  text-xs
+                  text-zinc-500
+                "
+              >
+                <span
                   className="
-                    border border-emerald-500/20
-                    bg-emerald-500/10
-                    text-emerald-500
+                    flex items-center
+                    gap-1.5
                   "
                 >
-                  {timeLeft ||
-                    'SLA Active'}
-                </Badge>
+                  <User size={13} />
+
+                  Requested by{' '}
+                  {ticket.requester?.email ||
+                    'Unknown'}
+                </span>
+
+                {ticket.createdAt && (
+                  <span
+                    className="
+                      flex items-center
+                      gap-1.5
+                    "
+                  >
+                    <Clock size={13} />
+
+                    Created{' '}
+                    {new Date(
+                      ticket.createdAt,
+                    ).toLocaleString()}
+                  </span>
+                )}
+              </div>
+
+              {ticket.attachmentUrl && (
+                <a
+                  href={
+                    ticket.attachmentUrl
+                  }
+                  target="_blank"
+                  className="
+                    flex w-fit
+                    items-center
+                    gap-2
+                    rounded-xl
+                    border border-zinc-200
+                    bg-white/70
+                    px-4 py-2
+                    text-sm
+                    transition-all
+                    hover:bg-white
+
+                    dark:border-white/10
+                    dark:bg-white/[0.04]
+                    dark:hover:bg-white/[0.08]
+                  "
+                >
+                  <Paperclip size={14} />
+
+                  View Attachment
+                </a>
               )}
             </div>
-
-            <p
-              className="
-                max-w-4xl
-                text-sm
-                leading-7
-                text-zinc-600
-
-                dark:text-zinc-400
-              "
-            >
-              {ticket.description}
-            </p>
-
-            {ticket.attachmentUrl && (
-              <a
-                href={
-                  ticket.attachmentUrl
-                }
-                target="_blank"
-                className="
-                  w-fit
-                  rounded-xl
-                  border border-zinc-200
-                  bg-zinc-100
-                  px-4 py-2
-                  text-sm
-                  transition-all
-                  hover:bg-zinc-200
-
-                  dark:border-white/10
-                  dark:bg-white/[0.04]
-                  dark:hover:bg-white/[0.08]
-                "
-              >
-                View Attachment
-              </a>
-            )}
           </div>
         </Card>
 
@@ -701,7 +884,16 @@ export default function TicketPage() {
                   ticket.events.map(
                     (
                       event,
-                    ) => (
+                    ) => {
+                      const {
+                        Icon: EventIcon,
+                        className:
+                          eventIconClass,
+                      } = getEventVisual(
+                        event.type,
+                      );
+
+                      return (
                       <div
                         key={
                           event.id
@@ -720,7 +912,7 @@ export default function TicketPage() {
                         <div
                           className="
                             absolute
-                            left-7
+                            left-9
                             top-0
                             h-full
                             w-px
@@ -737,15 +929,19 @@ export default function TicketPage() {
                           "
                         >
                           <div
-                            className="
-                              mt-1
-                              h-3 w-3
+                            className={`
+                              flex h-8 w-8
+                              shrink-0
+                              items-center
+                              justify-center
                               rounded-full
-                              bg-black
-
-                              dark:bg-white
-                            "
-                          />
+                              ${eventIconClass}
+                            `}
+                          >
+                            <EventIcon
+                              size={15}
+                            />
+                          </div>
 
                           <div className="flex-1">
                             <div
@@ -828,7 +1024,8 @@ export default function TicketPage() {
                           </div>
                         </div>
                       </div>
-                    ),
+                      );
+                    },
                   )
                 ) : (
                   <div
@@ -875,6 +1072,8 @@ export default function TicketPage() {
                 <p
                   className="
                     mb-2
+                    flex items-center
+                    gap-1.5
                     text-xs
                     font-medium
                     uppercase
@@ -882,6 +1081,7 @@ export default function TicketPage() {
                     text-zinc-500
                   "
                 >
+                  <User size={12} />
                   Assigned To
                 </p>
 
@@ -897,22 +1097,27 @@ export default function TicketPage() {
                     dark:bg-zinc-950
                   "
                 >
-                  {ticket.assignedToId
-                    ? members.find(
-                      (member) =>
-                        member.user.id ===
-                        ticket.assignedToId,
-                    )?.user.email
-                    : 'Unassigned'}
+                  {ticket.assignedTo?.email ||
+                    'Unassigned'}
                 </div>
               </div>
 
               {/* STATUS */}
               {role !== 'CLIENT' && (
-                <div className="relative z-50">
+                <div
+                  className="
+                    relative z-50
+                    border-t border-zinc-200
+                    pt-6
+
+                    dark:border-white/10
+                  "
+                >
                   <p
                     className="
                       mb-2
+                      flex items-center
+                      gap-1.5
                       text-xs
                       font-medium
                       uppercase
@@ -920,6 +1125,7 @@ export default function TicketPage() {
                       text-zinc-500
                     "
                   >
+                    <RefreshCw size={12} />
                     Update Status
                   </p>
 
@@ -976,10 +1182,20 @@ export default function TicketPage() {
 
               {/* ASSIGN */}
               {role === 'ADMIN' && (
-                <div className="relative z-40">
+                <div
+                  className="
+                    relative z-40
+                    border-t border-zinc-200
+                    pt-6
+
+                    dark:border-white/10
+                  "
+                >
                   <p
                     className="
                       mb-2
+                      flex items-center
+                      gap-1.5
                       text-xs
                       font-medium
                       uppercase
@@ -987,6 +1203,7 @@ export default function TicketPage() {
                       text-zinc-500
                       "
                   >
+                    <UserPlus size={12} />
                     Assign Ticket
                   </p>
 
@@ -1069,10 +1286,19 @@ export default function TicketPage() {
 
               {/* SLA OVERRIDE */}
               {role === 'ADMIN' && (
-                <div>
+                <div
+                  className="
+                    border-t border-zinc-200
+                    pt-6
+
+                    dark:border-white/10
+                  "
+                >
                   <p
                     className="
                       mb-2
+                      flex items-center
+                      gap-1.5
                       text-xs
                       font-medium
                       uppercase
@@ -1080,6 +1306,7 @@ export default function TicketPage() {
                       text-zinc-500
                     "
                   >
+                    <Clock size={12} />
                     Override SLA Due Date
                   </p>
 
@@ -1125,18 +1352,41 @@ export default function TicketPage() {
               )}
 
               {role === 'ADMIN' && (
-                <div>
+                <div
+                  className="
+                    rounded-2xl
+                    border border-red-500/20
+                    bg-red-500/5
+                    p-4
+
+                    dark:border-red-500/10
+                  "
+                >
                   <p
                     className="
                     mb-2
+                    flex items-center
+                    gap-1.5
                     text-xs
                     font-medium
                     uppercase
                     tracking-wider
-                    text-zinc-500
+                    text-red-500
                   "
                   >
+                    <ShieldAlert size={12} />
                     Danger Zone
+                  </p>
+
+                  <p
+                    className="
+                      mb-3
+                      text-xs
+                      text-zinc-500
+                    "
+                  >
+                    Moves this ticket to trash. It can be restored
+                    or permanently deleted from there later.
                   </p>
 
                   <Button
